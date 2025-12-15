@@ -1,0 +1,25 @@
+apiVersion: machinelearning.seldon.io/v1
+kind: SeldonDeployment
+metadata:
+  name: iris-triton
+spec:
+  predictors:
+  - name: default
+    replicas: 1
+    componentSpecs:
+    - spec:
+        containers:
+        - name: iris-model
+          image: nvcr.io/nvidia/tritonserver:23.08-py3  
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 4Gi
+    graph:
+      name: iris-model
+      implementation: TRITON_SERVER
+      modelUri: s3://mlflow-artifacts/triton-store 
+      envSecretRefName: seldon-rclone-secret
